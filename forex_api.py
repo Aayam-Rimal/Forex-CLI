@@ -1,7 +1,17 @@
 ## forex api using frankfurter api 
 
 import requests
+import logging
 
+log_path="forex.log"
+
+logging.basicConfig(
+   filename=log_path,
+   level= logging.INFO,
+   format="%(asctime)s - %(levelname)s - %(message)s"
+
+
+)
 
 
 def safe_get(url, params=None, timeout=5):
@@ -11,15 +21,15 @@ def safe_get(url, params=None, timeout=5):
       data=response.json()
       return data
    except requests.exceptions.HTTPError as e:
-      print("HTTP error:", e)
+      logging.error("HTTP error:", e)
    except requests.exceptions.ConnectionError as e:
-      print("connection error:", e)
+      logging.error("connection error:", e)
    except requests.exceptions.Timeout as e:
-      print("timeout error:", e)
+      logging.error("timeout error:", e)
    except requests.exceptions.RequestException as e:
-      print("request failed:", e)
+      logging.error("request failed:", e)
    except ValueError as e:
-      print("failed to parse json:", e)
+      logging.error("failed to parse json:", e)
    return None
       
       
@@ -31,7 +41,7 @@ def convert(fromcu, to, amount):
    converted_amount= amount * data['rates'][to]
    print(f" {amount} {fromcu}: {converted_amount} {to}")
   else:
-     print("conversion failed!!")
+     logging.error("conversion failed!!")
 
 
 def historical(fromcu, to, date):
@@ -40,7 +50,7 @@ def historical(fromcu, to, date):
   if to in data['rates']:
    print(data['rates'])
   else:
-     print("data fetch failed!!")
+     logging.error("data fetch failed!!")
   
 
 def timeseries(fromcu, to, start_date, end_date):
@@ -61,7 +71,7 @@ def main():
              amount= float(input("enter amount of currency you want to convert: "))
              convert(from_amt, to, amount)
             except ValueError:
-               print("invalid amount! enter correct one!")
+               logging.warning("invalid amount! enter correct one!")
                continue
             
 
